@@ -162,19 +162,6 @@ const Quiz = () => {
               </Button>
             </div>
           </div>
-              <ChevronLeft className="w-4 h-4" />
-              Previous
-            </Button>
-
-            <Button
-              onClick={handleNext}
-              disabled={!canGoNext}
-              className="gap-2 gradient-primary hover:opacity-90"
-            >
-              {currentQuestionIndex === quizQuestions.length - 1 ? 'See Results' : 'Next'}
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
         </div>
       </div>
     </div>
