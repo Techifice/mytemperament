@@ -8,10 +8,5 @@
     "deploymentEnabled": {
       "main": true
     }
-  },
-  "env": {
-    "VITE_SUPABASE_PROJECT_ID": "@vite-supabase-project-id",
-    "VITE_SUPABASE_URL": "@vite-supabase-url",
-    "VITE_SUPABASE_PUBLISHABLE_KEY": "@vite-supabase-publishable-key"
   }
 }
