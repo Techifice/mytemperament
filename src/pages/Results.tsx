@@ -5,10 +5,16 @@ import { Card } from '@/components/ui/card';
 import { QuizResult } from '@/types/quiz';
 import { temperamentDetails } from '@/data/temperamentDetails';
 import { Lock, Sparkles, TrendingUp, Target, AlertTriangle, Lightbulb } from 'lucide-react';
+import { SubmissionForm } from '@/components/SubmissionForm';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Results = () => {
   const navigate = useNavigate();
   const [results, setResults] = useState<QuizResult | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const savedResults = localStorage.getItem('quizResults');
@@ -17,7 +23,48 @@ const Results = () => {
       return;
     }
     setResults(JSON.parse(savedResults));
+    
+    // Check if already submitted
+    const submitted = localStorage.getItem('quizSubmitted');
+    setIsSubmitted(submitted === 'true');
   }, [navigate]);
+
+  const handleSubmission = async (name: string, email: string) => {
+    if (!results) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('quiz_submissions')
+        .insert([{
+          name: name,
+          email: email,
+          primary_temperament: results.primary,
+          secondary_temperament: results.secondary,
+          scores: results.scores as any,
+          payment_status: 'unpaid'
+        }]);
+
+      if (error) throw error;
+
+      localStorage.setItem('quizSubmitted', 'true');
+      localStorage.setItem('submittedEmail', email);
+      setIsSubmitted(true);
+
+      toast({
+        title: "Results saved!",
+        description: "Your temperament profile has been saved successfully"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Failed to save",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!results) {
     return null;
@@ -59,6 +106,14 @@ const Results = () => {
               Understanding your unique personality blend
             </p>
           </div>
+
+          {/* Submission Form - Show if not yet submitted */}
+          {!isSubmitted && (
+            <SubmissionForm 
+              onSubmit={handleSubmission}
+              isSubmitting={isSubmitting}
+            />
+          )}
 
           {/* Temperament Cards */}
           <div className="grid md:grid-cols-2 gap-6">
