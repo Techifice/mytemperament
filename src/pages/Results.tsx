@@ -91,6 +91,33 @@ const Results = () => {
     ...secondaryDetail.threats.slice(0, 2)
   ];
 
+  // Show submission form as gate before results
+  if (!isSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle py-12">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="space-y-8">
+            <div className="text-center space-y-4 animate-fade-in">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
+                <Sparkles className="w-4 h-4" />
+                <span>Quiz Complete!</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold">Save Your Results</h1>
+              <p className="text-xl text-muted-foreground">
+                Enter your details to view your complete temperament profile
+              </p>
+            </div>
+
+            <SubmissionForm 
+              onSubmit={handleSubmission}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
       <div className="container mx-auto px-4 max-w-5xl">
@@ -106,14 +133,6 @@ const Results = () => {
               Understanding your unique personality blend
             </p>
           </div>
-
-          {/* Submission Form - Show if not yet submitted */}
-          {!isSubmitted && (
-            <SubmissionForm 
-              onSubmit={handleSubmission}
-              isSubmitting={isSubmitting}
-            />
-          )}
 
           {/* Temperament Cards */}
           <div className="grid md:grid-cols-2 gap-6">
