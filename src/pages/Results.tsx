@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -8,8 +8,6 @@ import { Lock, Sparkles, TrendingUp, Target, AlertTriangle, Lightbulb } from 'lu
 import { SubmissionForm } from '@/components/SubmissionForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { storage } from '@/utils/storage';
-import { STORAGE_KEYS } from '@/config/constants';
 
 const Results = () => {
   const navigate = useNavigate();
@@ -19,24 +17,19 @@ const Results = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const savedResults = storage.getItem<QuizResult>(STORAGE_KEYS.quizResults);
+    const savedResults = localStorage.getItem('quizResults');
     if (!savedResults) {
-      toast({
-        title: 'No results found',
-        description: 'Please complete the quiz first',
-        variant: 'destructive',
-      });
       navigate('/');
       return;
     }
-    setResults(savedResults);
+    setResults(JSON.parse(savedResults));
     
     // Check if already submitted
-    const submitted = storage.getItem<boolean>(STORAGE_KEYS.quizSubmitted);
-    setIsSubmitted(submitted === true);
-  }, [navigate, toast]);
+    const submitted = localStorage.getItem('quizSubmitted');
+    setIsSubmitted(submitted === 'true');
+  }, [navigate]);
 
-  const handleSubmission = useCallback(async (name: string, email: string) => {
+  const handleSubmission = async (name: string, email: string) => {
     if (!results) return;
 
     setIsSubmitting(true);
@@ -54,8 +47,8 @@ const Results = () => {
 
       if (error) throw error;
 
-      storage.setItem(STORAGE_KEYS.quizSubmitted, true);
-      storage.setItem(STORAGE_KEYS.submittedEmail, email);
+      localStorage.setItem('quizSubmitted', 'true');
+      localStorage.setItem('submittedEmail', email);
       setIsSubmitted(true);
 
       toast({
@@ -63,17 +56,15 @@ const Results = () => {
         description: "Your temperament profile has been saved successfully"
       });
     } catch (error: any) {
-      console.error('Submission error:', error);
       toast({
         title: "Failed to save",
-        description: error.message || 'An unexpected error occurred',
+        description: error.message,
         variant: "destructive"
       });
-      throw error; // Re-throw for form to handle
     } finally {
       setIsSubmitting(false);
     }
-  }, [results, toast]);
+  };
 
   if (!results) {
     return null;

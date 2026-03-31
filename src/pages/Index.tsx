@@ -18,7 +18,7 @@ const Index = () => {
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
             Unlock Your
-            <span className="block gradient-primary bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Temperament Profile
             </span>
           </h1>

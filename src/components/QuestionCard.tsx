@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { QuizQuestion } from '@/types/quiz';
-import { useState, memo } from 'react';
+import { useState } from 'react';
 
 interface QuestionCardProps {
   question: QuizQuestion;
@@ -10,7 +10,7 @@ interface QuestionCardProps {
   currentAnswer?: number;
 }
 
-export const QuestionCard = memo(({ question, onAnswer, currentAnswer }: QuestionCardProps) => {
+export const QuestionCard = ({ question, onAnswer, currentAnswer }: QuestionCardProps) => {
   const [selectedOption, setSelectedOption] = useState<number | undefined>(currentAnswer);
   const [sliderValue, setSliderValue] = useState<number>(currentAnswer ?? 2);
 
@@ -82,4 +82,4 @@ export const QuestionCard = memo(({ question, onAnswer, currentAnswer }: Questio
       </div>
     </Card>
   );
-});
+};
